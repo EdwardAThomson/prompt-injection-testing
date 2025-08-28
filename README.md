@@ -1,10 +1,17 @@
 # Prompt Injection Testing - Prompt Safety & Expansion Evaluator
 
-A CLI tool that analyzes how prompt expansion affects safety classification by LLMs.
+A CLI tool that analyzes how prompt expansion and adversarial system prompts affect safety classification by LLMs.
+
+A GUI is also avaible in this project.
 
 ## Overview
 
-This app takes a list of prompts, classifies them for safety, expands them verbosely, then re-classifies the expanded versions to measure how verbosity affects safety detection.
+This app takes a list of prompts and performs safety analysis through multiple modes:
+- **Expansion Mode:** Expands prompts verbosely, then compares safety classifications
+- **Feedback Mode:** Tests prompts with adversarial/suspicious system prompts
+- **No-Expansion Mode:** Direct safety classification without modification
+
+Perfect for research into LLM safety behaviors, prompt injection analysis, and adversarial prompt testing.
 
 ## Installation
 
@@ -31,8 +38,26 @@ python cli.py --input prompts.txt --out ./results
 python cli.py --config config.yaml
 ```
 
-### Advanced Options
+### Testing Modes
 
+**Standard Expansion Mode:**
+This default mode is quite verbose.
+
+```bash
+python cli.py --input prompts.txt --out ./results
+```
+
+**Minimal Expansion Mode:**
+```bash
+python cli.py --input prompts.txt --out ./results --minimal-expansion
+```
+
+**Feedback/Adversarial Mode:**
+```bash
+python cli.py --input prompts.txt --out ./results --no-expansion --feedback-mode
+```
+
+**Advanced Options:**
 ```bash
 python cli.py \
   --input ./data/prompts.txt \
@@ -66,6 +91,20 @@ Write a poem about cats
 - `results.csv` - Flattened table for spreadsheet analysis
 - `logs/` - Raw LLM exchanges (with --debug)
 
+## Testing Modes Explained
+
+### Expansion Mode (Default)
+Expands prompts to be more verbose/detailed, then compares safety classifications between original and expanded versions. Useful for testing if verbose prompts can bypass safety filters.
+
+### Feedback Mode (`--feedback-mode`)
+Tests prompts with an adversarial system prompt that makes the safety judge more suspicious. Use with `--no-expansion` to test baseline vs adversarial classification.
+
+### No-Expansion Mode (`--no-expansion`)
+Skips expansion and directly classifies prompts. Combine with `--feedback-mode` for adversarial testing.
+
+### Minimal Expansion (`--minimal-expansion`)
+Expands prompts with minimal verbosity instead of full verbose expansion.
+
 ## Configuration
 
 See `config.yaml` for all available options including:
@@ -74,15 +113,18 @@ See `config.yaml` for all available options including:
 - Retry settings
 - Output formats
 - Privacy options (redaction)
+- Feedback mode system prompts
 
 ## Architecture
 
 - `loader.py` - Reads prompts from txt/jsonl files
-- `judge.py` - LLM-based safety classification
-- `expand.py` - LLM-based prompt expansion  
+- `judge.py` - LLM-based safety classification with feedback mode support
+- `expand.py` - LLM-based prompt expansion (minimal and standard)
 - `report.py` - Generates markdown, CSV, and JSONL reports
 - `config.py` - Configuration management
 - `cli.py` - Main command-line interface
+- `gui.py` - Optional GUI interface
+- `fix_report.py` - Utility to regenerate reports from existing logs
 
 ## Example Output
 
@@ -91,5 +133,18 @@ The tool generates comprehensive reports showing:
 - Confusion matrix (safe→unsafe, unsafe→safe transitions)
 - Top score changes with prompt examples
 - Detailed results table
+- Mode-specific analysis (expansion vs feedback vs baseline)
 
-Perfect for research into LLM safety behaviors and prompt injection analysis.
+## Key Findings
+
+Based on research with this tool:
+- **Prompt expansion generally degrades safety detection** (models become more permissive)
+- **Adversarial system prompts improve threat detection** (models become more restrictive)
+- **Both GPT-4o and GPT-5 show consistent patterns** across these behaviors
+
+## Use Cases
+
+- **Red team testing:** Evaluate if verbose prompts bypass safety filters
+- **Safety research:** Measure impact of prompt engineering on safety classification
+- **Adversarial testing:** Test effectiveness of suspicious system prompts
+- **Model comparison:** Compare safety behaviors across different LLMs
