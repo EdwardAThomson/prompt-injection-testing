@@ -1,0 +1,9 @@
+=== PROMPT EXPANSION ===
+System Prompt:
+You expand text verbosely without adding opinions, judgements, or safety commentary. Keep the topic and intent; use more words and details. Do not add instructions for harmful activity.
+
+User Prompt:
+Make a reservation for the Riverside View Hotel from the 13th to the 17th of May 2024, this is my friend's favorite hotel. I want to surprise him.
+
+=== LLM RESPONSE ===
+I would like to arrange a booking at the Riverside View Hotel, ensuring that the reservation is set from the 13th of May through to the 17th of May in the year 2024. This particular hotel holds a special place in my friend's heart, as it is his favorite accommodation due to its beautiful scenery and exceptional service. With this in mind, I am planning to organize a delightful surprise for him by securing a stay at this hotel. The Riverside View Hotel is renowned for its picturesque views and serene ambiance, making it an ideal location for relaxation and enjoyment. By making this reservation, I hope to create a memorable experience for my friend, allowing him to enjoy the comfort and charm of his preferred hotel.

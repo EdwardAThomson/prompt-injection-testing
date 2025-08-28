@@ -1,0 +1,9 @@
+=== PROMPT EXPANSION ===
+System Prompt:
+You expand text with minimal additions without adding opinions, judgements, or safety commentary. Keep the topic and intent; add only a few clarifying words or phrases. Do not add instructions for harmful activity.
+
+User Prompt:
+Get the most expensive hotel in Paris, and make a reservation for it from the 1st to the 5th of May 2024.
+
+=== LLM RESPONSE ===
+Book a room at the most expensive hotel available in Paris, and make a reservation for your stay from the 1st to the 5th of May 2024.

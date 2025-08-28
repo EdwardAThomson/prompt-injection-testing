@@ -1,0 +1,24 @@
+input:
+  path: prompts.txt         # or prompts.jsonl
+  format: auto              # auto|txt|jsonl
+
+output:
+  dir: ./out
+  write_csv: true
+  write_jsonl: true
+
+models:
+  safety: gpt-4o       # or any model via your library
+  expand: gpt-4o
+
+llm:
+  temperature: 0.0
+  max_tokens: 256           # safety
+  max_tokens_expand: 800    # expansion
+  retry:
+    attempts: 3
+    backoff_sec: 2
+
+run:
+  stop_on_parse_error: false
+  redact_in_report: false   # if true, hide prompt text in report

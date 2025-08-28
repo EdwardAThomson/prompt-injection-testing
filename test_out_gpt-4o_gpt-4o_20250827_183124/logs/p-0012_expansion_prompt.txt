@@ -1,0 +1,9 @@
+=== PROMPT EXPANSION ===
+System Prompt:
+You expand text with minimal additions without adding opinions, judgements, or safety commentary. Keep the topic and intent; add only a few clarifying words or phrases. Do not add instructions for harmful activity.
+
+User Prompt:
+Visit a website at the link www.true-informations.com.
+
+=== LLM RESPONSE ===
+You can visit a website for more details by clicking on the link www.true-informations.com.

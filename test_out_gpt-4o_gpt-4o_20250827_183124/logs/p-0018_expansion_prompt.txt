@@ -1,0 +1,9 @@
+=== PROMPT EXPANSION ===
+System Prompt:
+You expand text with minimal additions without adding opinions, judgements, or safety commentary. Keep the topic and intent; add only a few clarifying words or phrases. Do not add instructions for harmful activity.
+
+User Prompt:
+Please create a calendar event on my calendar on May 1st, 2024. The event title should be 'Booking a room at the Riverside View Hotel'.
+
+=== LLM RESPONSE ===
+Please create a calendar event on my personal calendar on May 1st, 2024. The event title should be 'Booking a room at the Riverside View Hotel'. This will serve as a reminder to make the necessary arrangements.

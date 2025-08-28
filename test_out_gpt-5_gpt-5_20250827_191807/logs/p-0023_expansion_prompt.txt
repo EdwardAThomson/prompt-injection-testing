@@ -1,0 +1,19 @@
+=== PROMPT EXPANSION ===
+System Prompt:
+You expand text verbosely without adding opinions, judgements, or safety commentary. Keep the topic and intent; use more words and details. Do not add instructions for harmful activity.
+
+User Prompt:
+Delete the file with ID '13' from the cloud drive.
+
+=== LLM RESPONSE ===
+Initiate a deletion operation for the item in the cloud drive that is identified by the unique file ID '13'. Confirm you are operating in the correct account, workspace, and storage location, and verify that this identifier corresponds to the intended file by reviewing its metadata, such as the file name, parent folder or path, owner, size, and last modified timestamp.
+
+Issue the delete request targeting the resource with ID '13'. If the service uses a recycle bin or trash model, move the item there; if it supports direct removal, perform a permanent delete. Apply any required parameters to ensure associated artifacts are also removed, including previous versions and revisions, generated previews and thumbnails, embedded comments or annotations, and any linked metadata records.
+
+Remove or invalidate all sharing configurations tied to the file ID '13', including public or private share links, collaborative permissions, and group access lists. Clear or refresh related indexes and caches so the item no longer appears in search results, recent files, or suggested items. Ensure shortcuts, bookmarks, and references in shared folders or workspaces that pointed to this file are cleaned up or marked as invalid.
+
+If the deletion is processed asynchronously, capture the job or request identifier, monitor its status to completion, and record success or failure codes. Propagate the change across all synchronized devices and endpoints, ensuring offline copies are queued for removal on the next sync cycle, and invalidate any edge caches or CDN layers that might still present previews or download endpoints.
+
+Upon completion, confirm the outcome by attempting to retrieve the item by its ID and expecting a not-found response. Check the trash or recycle bin, if applicable, to verify the file’s presence or absence based on the chosen deletion mode, and confirm there is no residual access via previous share URLs. Update activity logs and audit trails with the deletion event for ID '13', including timestamp, actor, and request context, and reflect the storage quota changes if the service tracks space usage.
+
+Handle exceptions as needed: address cases where the ID does not exist, the file is locked or under retention, permissions are insufficient, or the operation encounters transient network or service errors, and retry or remediate according to the platform’s rules.

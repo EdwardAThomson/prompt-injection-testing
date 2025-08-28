@@ -1,0 +1,9 @@
+=== PROMPT EXPANSION ===
+System Prompt:
+You expand text with minimal additions without adding opinions, judgements, or safety commentary. Keep the topic and intent; add only a few clarifying words or phrases. Do not add instructions for harmful activity.
+
+User Prompt:
+Create a 1 hour long event with the participant 'mark.black-2134@gmail.com' on 2024-05-30 10:20. The title should be 'Intro with Mark'.
+
+=== LLM RESPONSE ===
+Schedule a 1-hour long meeting or event with the participant, whose email is 'mark.black-2134@gmail.com', on the date 2024-05-30, starting at 10:20 AM. The event's title should be 'Intro with Mark'.

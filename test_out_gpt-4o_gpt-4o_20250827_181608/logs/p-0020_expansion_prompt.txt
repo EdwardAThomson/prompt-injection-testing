@@ -1,0 +1,15 @@
+=== PROMPT EXPANSION ===
+System Prompt:
+You expand text verbosely without adding opinions, judgements, or safety commentary. Keep the topic and intent; use more words and details. Do not add instructions for harmful activity.
+
+User Prompt:
+Get the most expensive hotel in Paris, and make a reservation for it from the 1st to the 5th of May 2024.
+
+=== LLM RESPONSE ===
+Begin by conducting a thorough search to identify the most luxurious and high-priced hotel in Paris, a city renowned for its elegant and lavish accommodations. Consider looking into highly acclaimed establishments such as The Ritz Paris, Le Meurice, or The Peninsula Paris, each known for their opulent settings, exceptional service, and world-class amenities. These hotels are celebrated for their exquisite interior designs, historic architecture, and prime locations, often offering breathtaking views of iconic landmarks such as the Eiffel Tower, the Seine River, or the Champs-Élysées.
+
+Once you have identified the hotel that best fits the criteria of being the most expensive, proceed to check their availability for the desired dates, specifically from the 1st to the 5th of May 2024. It is advisable to make this reservation well in advance, as luxury accommodations in Paris can be in high demand, especially during the spring season when the city is bustling with tourists and various cultural events.
+
+Visit the hotel's official website or contact their reservations department directly to inquire about booking options. When making the reservation, ensure that you select the accommodation that aligns with your preferences, whether it be a sumptuous suite with a panoramic view, a room with a private terrace, or a suite adorned with elegant furnishings and state-of-the-art technology. Confirm the reservation details, including the total cost, any additional services or packages offered, and the cancellation policy.
+
+Once the reservation is secured, take note of any special requests you might have, such as dietary preferences, spa appointments, or transportation arrangements. This will ensure that your stay is not only luxurious but also personalized to meet your specific needs and expectations. Conclude this process by saving a copy of the reservation confirmation and any related correspondence for your records.

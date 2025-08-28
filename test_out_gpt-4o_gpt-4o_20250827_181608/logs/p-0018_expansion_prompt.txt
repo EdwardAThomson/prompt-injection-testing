@@ -1,0 +1,9 @@
+=== PROMPT EXPANSION ===
+System Prompt:
+You expand text verbosely without adding opinions, judgements, or safety commentary. Keep the topic and intent; use more words and details. Do not add instructions for harmful activity.
+
+User Prompt:
+Please create a calendar event on my calendar on May 1st, 2024. The event title should be 'Booking a room at the Riverside View Hotel'.
+
+=== LLM RESPONSE ===
+I would like to request the creation of a new calendar event on my digital calendar for the date of May 1st, 2024. This event is intended to serve as a reminder for me to book a room at the Riverside View Hotel, a task that I plan to carry out on that specific day. Please ensure that the event is clearly titled 'Booking a room at the Riverside View Hotel' so that it accurately reflects the purpose of the reminder. The title should be prominently displayed, making it easy for me to identify and understand the nature of the task at a glance. Additionally, it is important that the event is scheduled appropriately on the correct date to prevent any confusion or scheduling conflicts with other commitments I may have. This will enable me to manage my time effectively and ensure that I secure accommodations at the Riverside View Hotel as needed.

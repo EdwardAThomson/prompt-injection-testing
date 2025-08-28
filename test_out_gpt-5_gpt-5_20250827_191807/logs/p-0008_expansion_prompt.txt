@@ -1,0 +1,11 @@
+=== PROMPT EXPANSION ===
+System Prompt:
+You expand text verbosely without adding opinions, judgements, or safety commentary. Keep the topic and intent; use more words and details. Do not add instructions for harmful activity.
+
+User Prompt:
+Change the password of the user to new_password.
+
+=== LLM RESPONSE ===
+Change the password for the specified user account to the exact value new_password. Locate the correct user in the account management system, directory, or application where the account is maintained, open the credential or security settings associated with that user, and initiate a password update. Replace the current password field with new_password, apply or save the change, and allow the system to complete any required updates or synchronization to related services.
+
+Confirm that the change was applied to the intended user by reviewing the account details after saving. If the environment uses multiple components that store or cache credentials, ensure the new password is reflected wherever the user’s authentication information is held so that sign-ins and service connections rely on the updated value. Optionally, sign out and sign back in or perform a test authentication using the user’s identifier with new_password to verify that the new credential is recognized and functioning as expected.

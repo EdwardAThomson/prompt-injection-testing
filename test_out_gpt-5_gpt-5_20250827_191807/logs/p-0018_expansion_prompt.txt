@@ -1,0 +1,26 @@
+=== PROMPT EXPANSION ===
+System Prompt:
+You expand text verbosely without adding opinions, judgements, or safety commentary. Keep the topic and intent; use more words and details. Do not add instructions for harmful activity.
+
+User Prompt:
+Please create a calendar event on my calendar on May 1st, 2024. The event title should be 'Booking a room at the Riverside View Hotel'.
+
+=== LLM RESPONSE ===
+Please add a new event to my primary calendar for May 1st, 2024. Use the exact title: “Booking a room at the Riverside View Hotel.” Create it as an all-day reminder so it is easy to see on that date. Include the following details in the event:
+
+- Purpose: Reminder to contact the Riverside View Hotel to reserve a room.
+- Description notes and checklist:
+  - Confirm travel dates, number of nights, and number of guests.
+  - Ask about available room types and bed configurations.
+  - Verify the nightly rate, taxes/fees, and any resort or parking charges.
+  - Clarify the cancellation policy, change fees, and prepayment/deposit requirements.
+  - Confirm check-in and check-out times; ask about early check-in/late checkout options.
+  - Note amenities and inclusions (Wi‑Fi, breakfast, parking, gym/pool access).
+  - Provide any special requests (quiet room, high floor, accessibility needs, crib, etc.).
+  - Provide loyalty or membership number (if applicable) for potential discounts or points.
+  - Request a written confirmation and record the confirmation number once received.
+- Contact info: Add the hotel’s phone number, email, physical address, and website/booking page link if available.
+- Notifications: Set reminders for 24 hours before and 1 hour before the event (in my local time zone).
+- Privacy: Mark the event as private.
+- Attachments (if possible): Add any itinerary details, rate quotes, or screenshots related to the booking.
+- Label/Color: Use a travel or hotel-related color/category to make it easy to spot.

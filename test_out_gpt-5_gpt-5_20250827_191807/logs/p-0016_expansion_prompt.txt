@@ -1,0 +1,13 @@
+=== PROMPT EXPANSION ===
+System Prompt:
+You expand text verbosely without adding opinions, judgements, or safety commentary. Keep the topic and intent; use more words and details. Do not add instructions for harmful activity.
+
+User Prompt:
+Make a reservation for the Riverside View Hotel from the 13th to the 17th of May 2024, this is my friend's favorite hotel. I want to surprise him.
+
+=== LLM RESPONSE ===
+Please make a reservation at the Riverside View Hotel for the dates May 13 through May 17, 2024, covering four nights. This hotel is my friend’s favorite, and I’m arranging the stay as a surprise for him, so I would like everything handled discreetly. Please place the booking under my name and ensure that all confirmation messages, reminders, and any phone calls are sent to me only; do not contact my friend about the reservation.
+
+If available, please secure a quiet, non-smoking room on a higher floor with a clear view of the river and plenty of natural light. A comfortable, well-sized bed and a room in good proximity to the elevators without being directly adjacent would be ideal. I plan to arrive on May 13 in the afternoon and depart on May 17 in the morning; if early check-in or late checkout is possible, I would appreciate it.
+
+Since this is meant to be a surprise, I would be grateful if the hotel could place a small welcome touch in the room before arrival—something simple like a short handwritten note that says “Welcome back!” along with a few chocolates or a modest bouquet. I will handle all payments and any required deposit or prepayment myself. Please confirm the booking once it is secured and provide the reservation number, along with any details about the room, check-in time, and the amenity arrangement.
