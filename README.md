@@ -1,10 +1,10 @@
-# Prompt Testing - Prompt Safety & Expansion Evaluator
+# Prompt Injection Testing - Prompt Safety & Expansion Evaluator
 
 A CLI tool that analyzes how prompt expansion affects safety classification by LLMs.
 
 ## Overview
 
-PromptExpand takes a list of prompts, classifies them for safety, expands them verbosely, then re-classifies the expanded versions to measure how verbosity affects safety detection.
+This app takes a list of prompts, classifies them for safety, expands them verbosely, then re-classifies the expanded versions to measure how verbosity affects safety detection.
 
 ## Installation
 
