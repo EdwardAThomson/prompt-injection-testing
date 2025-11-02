@@ -5,7 +5,7 @@ A simple tool that analyzes how prompt expansion and adversarial system prompts 
 ## Background
 The initial idea was to make prompts more verbose and see if this helped an LLM spot malicious intent; however, this made performance worse. This research was actually inspired by the failed attempt to improve LLM safety by scrambling the inputs (see [ScrambleGate](https://github.com/EdwardAThomson/Scramble-Gate))
 
-In turn, this lead me to try asking the LLM to be more suspicious: this involved adding a system prompt to the LLM that instructed it to be more suspicious and alert to potential abuse. This seems to improve performance (see [findings_report.md](findings_report.md)).
+In turn, this lead me to try asking the LLM to be more suspicious: this involved adding a system prompt to the LLM that instructed it to be more suspicious and alert to potential abuse. This seems to improve performance (see [findings_report.md](docs/findings_report.md)).
 
 ## Overview
 
