@@ -6,6 +6,12 @@ from pathlib import Path
 from typing import Dict, Any, Optional
 
 
+# ── Default models (single source of truth) ──────────────────────────
+# Change these when upgrading to newer models. Everything else reads from here.
+DEFAULT_MODEL = "gpt-5.4"
+DEFAULT_WEAK_MODEL = "gpt-5.4-mini"
+
+
 DEFAULT_CONFIG = {
     'input': {
         'path': 'prompts.txt',
@@ -17,8 +23,8 @@ DEFAULT_CONFIG = {
         'write_jsonl': True
     },
     'models': {
-        'safety': 'gpt-4o',
-        'expand': 'gpt-4o'
+        'safety': DEFAULT_MODEL,
+        'expand': DEFAULT_MODEL
     },
     'llm': {
         'temperature': 0.0,
@@ -37,6 +43,31 @@ DEFAULT_CONFIG = {
         'feedback_mode': False,
         'no_expansion': False,
         'debug': False
+    },
+    'detectors': {
+        'enabled': ['llm_judge'],
+        'llm_judge': {},
+        'regex': {
+            'risk_threshold': 0.5,
+        },
+        'bert': {
+            'model': 'protectai/deberta-v3-base-prompt-injection-v2',
+            'mode': 'classification',
+            'threshold': 0.5,
+            'device': 'cpu',
+        },
+        'weak_model': {
+            'model': DEFAULT_WEAK_MODEL,
+            'temperature': 0.0,
+        },
+        'scramblegate': {
+            'scramble_mode': 'probabilistic',
+            'risk_threshold': 0.75,
+            'window_tokens': 800,
+            'stride_tokens': 400,
+            'views_per_window': 5,
+            'use_llm_probe': True,
+        },
     }
 }
 
@@ -88,13 +119,40 @@ class Config:
             'debug': ('run', 'debug')
         }
         
+        # Boolean store_true flags: only override config when True
+        # (False just means the flag wasn't passed, not an explicit choice)
+        bool_flags = {
+            'redact', 'stop_on_parse_error', 'test_mode',
+            'minimal_expansion', 'feedback_mode', 'no_expansion', 'debug',
+        }
+        # csv/jsonl use store_true (--csv) and store_false (--no-csv).
+        # Argparse defaults csv/jsonl to None when neither flag is passed.
+        # --csv sets True, --no-csv sets False. We handle them below.
+
         for cli_key, config_path in cli_mapping.items():
-            if cli_key in cli_args and cli_args[cli_key] is not None:
-                # Navigate to the nested config location
-                current = self.config
-                for key in config_path[:-1]:
-                    current = current[key]
-                current[config_path[-1]] = cli_args[cli_key]
+            value = cli_args.get(cli_key)
+            if value is None:
+                continue
+            if cli_key in bool_flags and value is False:
+                continue
+            current = self.config
+            for key in config_path[:-1]:
+                current = current[key]
+            current[config_path[-1]] = value
+
+        # Handle detector-specific overrides
+        if cli_args.get('detectors'):
+            self.config['detectors']['enabled'] = [
+                d.strip() for d in cli_args['detectors'].split(',')
+            ]
+        if cli_args.get('scramble_mode'):
+            self.config['detectors']['scramblegate']['scramble_mode'] = cli_args['scramble_mode']
+        if cli_args.get('bert_model'):
+            self.config['detectors']['bert']['model'] = cli_args['bert_model']
+        if cli_args.get('weak_model'):
+            self.config['detectors']['weak_model']['model'] = cli_args['weak_model']
+        if cli_args.get('no_llm_probe'):
+            self.config['detectors']['scramblegate']['use_llm_probe'] = False
     
     def get(self, *path):
         """Get configuration value by path (e.g., get('models', 'safety'))."""
@@ -130,9 +188,9 @@ def create_cli_parser():
     parser.add_argument('--max-tokens-expand', type=int, help='Max tokens for expansion')
     
     # Output formats
-    parser.add_argument('--csv', action='store_true', help='Generate CSV output')
+    parser.add_argument('--csv', action='store_true', default=None, help='Generate CSV output')
     parser.add_argument('--no-csv', action='store_false', dest='csv', help='Skip CSV output')
-    parser.add_argument('--jsonl', action='store_true', help='Generate JSONL output')
+    parser.add_argument('--jsonl', action='store_true', default=None, help='Generate JSONL output')
     parser.add_argument('--no-jsonl', action='store_false', dest='jsonl', help='Skip JSONL output')
     
     # Runtime options
@@ -142,9 +200,21 @@ def create_cli_parser():
     parser.add_argument('--minimal-expansion', action='store_true', help='Use minimal expansion mode (less verbose)')
     parser.add_argument('--feedback-mode', action='store_true', help='Use feedback mode with suspicious system prompt and written explanations')
     parser.add_argument('--no-expansion', action='store_true', help='Skip expansion step - only classify original prompts')
-    parser.add_argument('--stop-on-parse-error', action='store_true', 
+    parser.add_argument('--stop-on-parse-error', action='store_true',
                        help='Stop processing on JSON parse errors')
-    
+
+    # Detector options
+    parser.add_argument('--detectors', type=str,
+                       help='Comma-separated list of detectors to run (e.g. llm_judge,regex,bert)')
+    parser.add_argument('--scramble-mode', type=str,
+                       help='ScrambleGate scramble mode (e.g. probabilistic, broken_probabilistic)')
+    parser.add_argument('--bert-model', type=str,
+                       help='BERT model name for bert detector')
+    parser.add_argument('--weak-model', type=str,
+                       help='Model name for weak model detector (e.g. gpt-5.4-mini)')
+    parser.add_argument('--no-llm-probe', action='store_true',
+                       help='Disable ScrambleGate LLM probe (rules-only mode)')
+
     return parser
 
 

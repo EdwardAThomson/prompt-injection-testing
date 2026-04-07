@@ -8,8 +8,8 @@ output:
   write_jsonl: true
 
 models:
-  safety: gpt-4o       # or any model via your library
-  expand: gpt-4o
+  safety: gpt-5.4      # or any model via your library
+  expand: gpt-5.4
 
 llm:
   temperature: 0.0
@@ -22,3 +22,38 @@ llm:
 run:
   stop_on_parse_error: false
   redact_in_report: false   # if true, hide prompt text in report
+
+# Detector configuration (multi-detector pipeline)
+# Use --detectors flag or this config to enable multiple detectors.
+# When only llm_judge is enabled, the legacy single-detector pipeline runs.
+detectors:
+  enabled:
+    - llm_judge              # default: existing LLM-based judge
+    # - regex                # pattern matching (no API calls)
+    # - bert                 # local transformer model (no API calls)
+    # - weak_model           # cheap LLM pre-filter (no tool-call risk)
+    # - scramblegate         # ScrambleGate stochastic gating
+
+  # Per-detector configuration
+  llm_judge: {}              # uses models.safety settings from above
+
+  regex:
+    risk_threshold: 0.5      # risk score >= this -> unsafe
+
+  bert:
+    model: protectai/deberta-v3-base-prompt-injection-v2
+    mode: classification     # classification | similarity
+    threshold: 0.5
+    device: cpu              # cpu | cuda
+
+  weak_model:
+    model: gpt-5.4-mini      # cheap model with no tool-call capability
+    temperature: 0.0
+
+  scramblegate:
+    scramble_mode: probabilistic  # probabilistic | broken_probabilistic | clean_only | masking_only | etc.
+    risk_threshold: 0.75
+    window_tokens: 800
+    stride_tokens: 400
+    views_per_window: 5
+    use_llm_probe: true      # false = rules-only (no API calls)

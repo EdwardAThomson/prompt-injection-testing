@@ -27,8 +27,9 @@ class PromptExpandGUI:
         
         # Model variables - get from ai_helper
         self.supported_models = get_supported_models()
-        self.safety_model = tk.StringVar(value="gpt-4o")
-        self.expand_model = tk.StringVar(value="gpt-4o")
+        from config import DEFAULT_MODEL
+        self.safety_model = tk.StringVar(value=DEFAULT_MODEL)
+        self.expand_model = tk.StringVar(value=DEFAULT_MODEL)
         
         # Mode variables
         self.expansion_mode = tk.StringVar(value="normal")  # normal, minimal, none

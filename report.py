@@ -445,3 +445,185 @@ class ReportGenerator:
             'unsafe_to_safe': unsafe_to_safe,
             'unsafe_to_unsafe': unsafe_to_unsafe
         }
+
+    # ── Multi-detector report generation ──────────────────────────────
+
+    def generate_multi_detector_reports(
+        self, results: List[Dict], detector_names: List[str],
+        write_csv: bool = True, write_jsonl: bool = True,
+    ):
+        """Generate reports comparing multiple detectors side-by-side.
+
+        Args:
+            results: List of dicts from process_prompts_multi, each containing
+                     detector_results (Dict[str, DetectorResult]).
+            detector_names: Ordered list of detector names.
+        """
+        self._generate_multi_markdown(results, detector_names)
+        if write_jsonl:
+            self._generate_multi_jsonl(results, detector_names)
+        if write_csv:
+            self._generate_multi_csv(results, detector_names)
+
+    def _generate_multi_markdown(self, results: List[Dict], detector_names: List[str]):
+        report_path = self.output_dir / 'report.md'
+        total = len(results)
+
+        with open(report_path, 'w', encoding='utf-8') as f:
+            f.write("# Multi-Detector Prompt Safety Analysis\n\n")
+            f.write(f"**Generated:** {datetime.utcnow().isoformat()}Z\n")
+            f.write(f"**Detectors:** {', '.join(detector_names)}\n")
+            f.write(f"**Total Prompts:** {total}\n\n")
+
+            # Per-detector summary
+            f.write("## Per-Detector Summary\n\n")
+            f.write("| Detector | Safe | Unsafe | Safe % | Avg Score | Avg Latency |\n")
+            f.write("|----------|------|--------|--------|-----------|-------------|\n")
+            for det in detector_names:
+                safe = sum(1 for r in results if r["detector_results"][det].label == "safe")
+                unsafe = total - safe
+                safe_pct = (safe / total * 100) if total else 0
+                avg_score = sum(r["detector_results"][det].score for r in results) / total if total else 0
+                avg_lat = sum(r["detector_results"][det].latency_ms for r in results) / total if total else 0
+                f.write(f"| {det} | {safe} | {unsafe} | {safe_pct:.1f}% | {avg_score:.3f} | {avg_lat:.0f}ms |\n")
+            f.write("\n")
+
+            # Agreement matrix
+            if len(detector_names) > 1:
+                f.write("## Detector Agreement\n\n")
+                agree_count = 0
+                for r in results:
+                    labels = [r["detector_results"][d].label for d in detector_names]
+                    if len(set(labels)) == 1:
+                        agree_count += 1
+                f.write(f"- **Full agreement:** {agree_count}/{total} ({agree_count/total*100:.1f}%)\n")
+
+                # Pairwise agreement
+                if len(detector_names) > 2:
+                    f.write("\n| Pair | Agreement |\n")
+                    f.write("|------|-----------|\n")
+                    for i, d1 in enumerate(detector_names):
+                        for d2 in detector_names[i+1:]:
+                            pair_agree = sum(
+                                1 for r in results
+                                if r["detector_results"][d1].label == r["detector_results"][d2].label
+                            )
+                            f.write(f"| {d1} vs {d2} | {pair_agree}/{total} ({pair_agree/total*100:.1f}%) |\n")
+                f.write("\n")
+
+            # Comparison table
+            f.write("## Results Comparison\n\n")
+            header = "| ID |"
+            sep = "|----|"
+            for det in detector_names:
+                header += f" {det} |"
+                sep += "------|"
+            header += " Prompt Preview |"
+            sep += "----------------|"
+            f.write(header + "\n")
+            f.write(sep + "\n")
+
+            for r in results[:50]:
+                row = f"| {r['id']} |"
+                for det in detector_names:
+                    dr = r["detector_results"][det]
+                    row += f" {dr.label} ({dr.score:.2f}) |"
+
+                if self.redact:
+                    preview = f"[REDACTED-{len(r['original_prompt'])}chars]"
+                else:
+                    preview = r['original_prompt'][:80]
+                    if len(r['original_prompt']) > 80:
+                        preview += "..."
+                    preview = preview.replace('|', '\\|').replace('\n', ' ')
+                row += f" {preview} |"
+                f.write(row + "\n")
+
+            if total > 50:
+                f.write(f"\n*Showing first 50 of {total} results.*\n")
+
+            # Disagreements section
+            if len(detector_names) > 1:
+                disagreements = [
+                    r for r in results
+                    if len(set(r["detector_results"][d].label for d in detector_names)) > 1
+                ]
+                if disagreements:
+                    f.write(f"\n## Disagreements ({len(disagreements)} prompts)\n\n")
+                    for r in disagreements[:10]:
+                        f.write(f"### {r['id']}\n\n")
+                        if not self.redact:
+                            prompt_preview = r['original_prompt'][:300]
+                            if len(r['original_prompt']) > 300:
+                                prompt_preview += "..."
+                            f.write(f"**Prompt:** {prompt_preview}\n\n")
+                        for det in detector_names:
+                            dr = r["detector_results"][det]
+                            f.write(f"- **{det}:** {dr.label} ({dr.score:.2f})")
+                            if dr.feedback:
+                                f.write(f" - {dr.feedback[:150]}")
+                            f.write("\n")
+                        f.write("\n")
+
+    def _generate_multi_jsonl(self, results: List[Dict], detector_names: List[str]):
+        jsonl_path = self.output_dir / 'results.jsonl'
+        with open(jsonl_path, 'w', encoding='utf-8') as f:
+            for r in results:
+                record = {
+                    "id": r["id"],
+                    "original_prompt": r["original_prompt"],
+                    "detector_results": {},
+                    "meta": {
+                        "timestamp_utc": datetime.utcnow().isoformat(),
+                    },
+                }
+                for det in detector_names:
+                    dr = r["detector_results"][det]
+                    record["detector_results"][det] = {
+                        "label": dr.label,
+                        "score": dr.score,
+                        "feedback": dr.feedback,
+                        "latency_ms": dr.latency_ms,
+                        "details": dr.details,
+                    }
+                if r.get("expanded_prompt"):
+                    record["expanded_prompt"] = r["expanded_prompt"]
+                    record["expanded_detector_results"] = {}
+                    for det in detector_names:
+                        if det in r.get("expanded_detector_results", {}):
+                            edr = r["expanded_detector_results"][det]
+                            record["expanded_detector_results"][det] = {
+                                "label": edr.label,
+                                "score": edr.score,
+                                "feedback": edr.feedback,
+                                "latency_ms": edr.latency_ms,
+                                "details": edr.details,
+                            }
+                json.dump(record, f, ensure_ascii=False)
+                f.write('\n')
+
+    def _generate_multi_csv(self, results: List[Dict], detector_names: List[str]):
+        csv_path = self.output_dir / 'results.csv'
+        if not results:
+            return
+
+        # Build dynamic fieldnames
+        fieldnames = ['id']
+        for det in detector_names:
+            fieldnames.extend([f'{det}_label', f'{det}_score', f'{det}_latency_ms'])
+        if not self.redact:
+            fieldnames.append('prompt')
+
+        with open(csv_path, 'w', newline='', encoding='utf-8') as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writeheader()
+            for r in results:
+                row = {'id': r['id']}
+                for det in detector_names:
+                    dr = r["detector_results"][det]
+                    row[f'{det}_label'] = dr.label
+                    row[f'{det}_score'] = dr.score
+                    row[f'{det}_latency_ms'] = dr.latency_ms
+                if not self.redact:
+                    row['prompt'] = r['original_prompt']
+                writer.writerow(row)

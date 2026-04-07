@@ -45,11 +45,23 @@ _model_config = {
         temperature=0.7,
         role_description="You are an information security expert."
     ),
+    "gpt-4o-mini": lambda prompt: send_prompt_oai(
+        prompt=prompt,
+        model="gpt-4o-mini",
+        max_tokens=4096,
+        temperature=0.7,
+        role_description="You are an information security expert."
+    ),
     "o1": lambda prompt: send_prompt_o1(prompt, model="o1"),
     "o1-mini": lambda prompt: send_prompt_o1(prompt, model="o1-mini"),
     "o3": lambda prompt: send_prompt_o1(prompt, model="o3"),
     "o4-mini": lambda prompt: send_prompt_o1(prompt, model="o4-mini"),
     "gpt-5": lambda prompt: send_prompt_o1(prompt, model="gpt-5"),
+    "gpt-5.2": lambda prompt: send_prompt_o1(prompt, model="gpt-5.2"),
+    "gpt-5.2-codex": lambda prompt: send_prompt_o1(prompt, model="gpt-5.2-codex"),
+    "gpt-5.3-codex": lambda prompt: send_prompt_o1(prompt, model="gpt-5.3-codex"),
+    "gpt-5.4": lambda prompt: send_prompt_o1(prompt, model="gpt-5.4"),
+    "gpt-5.4-mini": lambda prompt: send_prompt_o1(prompt, model="gpt-5.4-mini"),
     "gemini-1.5-pro-latest": lambda prompt: send_prompt_gemini(
         prompt=prompt,
         model_name="gemini-1.5-pro-latest",
@@ -72,6 +84,30 @@ _model_config = {
          max_output_tokens=8192,
          temperature=0.7,
     ),
+    "gemini-3-flash-preview": lambda prompt: send_prompt_gemini(
+         prompt=prompt,
+         model_name="gemini-3-flash-preview",
+         max_output_tokens=4096,
+         temperature=0.7,
+    ),
+    "gemini-3-pro-preview": lambda prompt: send_prompt_gemini(
+         prompt=prompt,
+         model_name="gemini-3-pro-preview",
+         max_output_tokens=8192,
+         temperature=0.7,
+    ),
+    "gemini-3.1-pro-preview": lambda prompt: send_prompt_gemini(
+         prompt=prompt,
+         model_name="gemini-3.1-pro-preview",
+         max_output_tokens=8192,
+         temperature=0.7,
+    ),
+    "gemini-2.0-flash": lambda prompt: send_prompt_gemini(
+         prompt=prompt,
+         model_name="gemini-2.0-flash",
+         max_output_tokens=4096,
+         temperature=0.7,
+    ),
     "claude-3-5-sonnet": lambda prompt: send_prompt_claude(
          prompt=prompt,
          model="claude-3-5-sonnet-20241022",
@@ -84,14 +120,62 @@ _model_config = {
          max_tokens=4096,
          temperature=0.7
     ),
+    "claude-sonnet-4.6": lambda prompt: send_prompt_claude(
+         prompt=prompt,
+         model="claude-sonnet-4-6-20250610",
+         max_tokens=4096,
+         temperature=0.7
+    ),
+    "claude-opus-4.6": lambda prompt: send_prompt_claude(
+         prompt=prompt,
+         model="claude-opus-4-6-20250610",
+         max_tokens=4096,
+         temperature=0.7
+    ),
+    "claude-haiku-4.5": lambda prompt: send_prompt_claude(
+         prompt=prompt,
+         model="claude-haiku-4-5-20251001",
+         max_tokens=4096,
+         temperature=0.7
+    ),
+    "claude-3-5-haiku": lambda prompt: send_prompt_claude(
+         prompt=prompt,
+         model="claude-3-5-haiku-20241022",
+         max_tokens=4096,
+         temperature=0.7
+    ),
+    # CLI backends (no API keys required - uses local CLI tools)
+    # Claude CLI: default (opus), sonnet, haiku
+    "claude-cli": lambda prompt: _send_prompt_cli("claude-cli", prompt),
+    "claude-cli-sonnet": lambda prompt: _send_prompt_cli("claude-cli", prompt, model="claude-sonnet-4-6"),
+    "claude-cli-haiku": lambda prompt: _send_prompt_cli("claude-cli", prompt, model="claude-haiku-4-5"),
+    # Gemini CLI: 3-flash (default), 3-pro, 3.1-pro, 2.5-pro
+    "gemini-cli": lambda prompt: _send_prompt_cli("gemini-cli", prompt),
+    "gemini-cli-pro": lambda prompt: _send_prompt_cli("gemini-cli", prompt, model="gemini-3-pro-preview"),
+    "gemini-cli-3.1-pro": lambda prompt: _send_prompt_cli("gemini-cli", prompt, model="gemini-3.1-pro-preview"),
+    "gemini-cli-2.5-pro": lambda prompt: _send_prompt_cli("gemini-cli", prompt, model="gemini-2.5-pro"),
+    # Codex CLI: gpt-5.4 (default), gpt-5.4-mini, gpt-5.3-codex, gpt-5.2-codex, gpt-5.2
+    "codex": lambda prompt: _send_prompt_cli("codex", prompt),
+    "codex-mini": lambda prompt: _send_prompt_cli("codex", prompt, model="gpt-5.4-mini"),
+    "codex-5.3": lambda prompt: _send_prompt_cli("codex", prompt, model="gpt-5.3-codex"),
+    "codex-5.2": lambda prompt: _send_prompt_cli("codex", prompt, model="gpt-5.2-codex"),
 }
 # --- End Model Configurations ---
+
+
+def _send_prompt_cli(backend: str, prompt: str, model: str = None) -> str:
+    """Route to CLI backend. Lazy-imports to avoid errors when CLI tools aren't installed."""
+    from cli_backends import send_prompt_cli
+    return send_prompt_cli(prompt, backend=backend, model=model)
 
 def get_supported_models():
     """Returns a list of supported model names."""
     return list(_model_config.keys())
 
-def send_prompt(prompt, model="gpt-4o"):
+def send_prompt(prompt, model=None):
+    if model is None:
+        from config import DEFAULT_MODEL
+        model = DEFAULT_MODEL
     """Sends a prompt to the specified AI model."""
     # Check if the model is supported
     if model not in _model_config:
@@ -114,8 +198,11 @@ def send_prompt(prompt, model="gpt-4o"):
 
 
 # Send prompts with GPT4o and 4o-mini
-def send_prompt_oai(prompt, model="gpt-4o", max_tokens=1500, temperature=0.7,
+def send_prompt_oai(prompt, model=None, max_tokens=1500, temperature=0.7,
                 role_description="You are an information security expert."):
+    if model is None:
+        from config import DEFAULT_MODEL
+        model = DEFAULT_MODEL
     # Initialize client if needed
     global client
     if client is None:
