@@ -65,7 +65,7 @@ python cli.py --input prompts.txt --out ./results --detectors llm_judge,regex,be
 python cli.py --input prompts.txt --out ./results --detectors scramblegate --scramble-mode broken_probabilistic
 
 # Cheap pre-filter using a different model
-python cli.py --input prompts.txt --out ./results --detectors weak_model --weak-model claude-3-5-haiku
+python cli.py --input prompts.txt --out ./results --detectors weak_model --weak-model claude-haiku-4-5
 ```
 
 ### Legacy Single-Detector Mode
@@ -139,7 +139,7 @@ Local transformer model with two modes:
 - **Similarity**: Computes cosine similarity against known injection templates using sentence-transformers
 
 ### Weak Model (`weak_model`)
-Uses cheap, small LLM models (gpt-4o-mini, claude-3-5-haiku, gemini-2.0-flash) as a pre-filter. Key safety property: these models are called WITHOUT tool access, so there is zero risk of the prompt being executed during classification.
+Uses cheap, small LLM models (gpt-5.4-mini, claude-haiku-4-5, gemini-3-flash-preview) as a pre-filter. Key safety property: these models are called WITHOUT tool access, so there is zero risk of the prompt being executed during classification.
 
 ### ScrambleGate (`scramblegate`)
 Ported from [ScrambleGate](https://github.com/EdwardAThomson/Scramble-Gate). Stochastic defense that:
