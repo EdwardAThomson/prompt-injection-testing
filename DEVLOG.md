@@ -1,0 +1,7 @@
+# Dev Log
+
+## 2026-07-15
+
+Completed the migration to the shared `llm-backends` package (v0.1.1), the fifth and final step of that refactor. `ai_helper.py` and `cli_backends.py` were reduced to thin facades over the package, so the CLI path now routes through the package's hardened interfaces (key-stripping, a neutral working directory, the codex userns workaround) instead of PIT's older unhardened single-file port. The model registry was trimmed from 36 keys to 30 by retiring stale names (gpt-4o, the o-series, older Gemini and Claude versions, and the codex model-override keys), while defaults and the SAFE_MODELS set were left untouched so future benchmark runs still measure the same models.
+
+**Decisions & notes:** Because PIT is a benchmark, measurement fidelity was the guiding constraint. The gpt-5.x keys deliberately keep their pre-package BARE request shape (single user message, no system prompt, no sampling params) via a local `_send_openai_bare` helper, since `judge.py` folds its system prompt into the user message for gpt-5 models; routing them through the package's `send_prompt_openai` would have added a system message and temperature, double-framing the judge and shifting verdicts. This run also un-ignored `tests/` in `.gitignore` (a legacy rule that would have silently discarded new tests) and added the repo's first test suite: 62 fakes-only tests covering the facade surface, fake dispatch, the gpt-5 bare-shape guarantee, the CLI key-strip regression, and every retired model name erroring before any network call.
