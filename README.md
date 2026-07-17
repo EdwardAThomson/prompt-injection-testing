@@ -172,6 +172,7 @@ judge.py                      # LLM-based safety classification
 expand.py                     # LLM-based prompt expansion
 report.py                     # Markdown, CSV, JSONL report generation
 ai_helper.py                  # Multi-provider LLM client
+cli_backends.py               # CLI backend facade (Claude Code / Gemini / Codex CLIs)
 gui.py                        # Optional GUI interface
 detectors/
   base.py                     # BaseDetector ABC + DetectorResult
